@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { cars } from '$lib/stores/carsStore';
-	import { get } from 'svelte/store';
+	import { derived, get } from 'svelte/store';
 	import { vehicles } from '$lib/data/vehiclesData';
 	import type { Car } from '$lib/types';
+
+	const totalFleetCost = derived(cars, ($cars) => $cars.reduce((sum, car) => sum + car.cost, 0));
 
 	let showVehicleSelect = false;
 	let showNamePrompt = false;
@@ -106,6 +108,12 @@
 		cars.update((currentCars) => currentCars.filter((_, i) => i !== index));
 	};
 </script>
+
+<!-- Fleet Summary -->
+<div class="fleet-summary">
+	<h2>Fleet Summary</h2>
+	<div class="total-cost">Total Cost: {$totalFleetCost} CANS</div>
+</div>
 
 <!-- Vehicle Selection Modal -->
 {#if showVehicleSelect}
@@ -306,6 +314,25 @@
 </div>
 
 <style>
+	.fleet-summary {
+		padding: 1.5rem;
+		margin-bottom: 1rem;
+		font-family: Arial, sans-serif;
+	}
+
+	.fleet-summary h2 {
+		font-size: 1.5rem;
+		font-weight: bold;
+		margin: 0 0 1rem 0;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid black;
+	}
+
+	.total-cost {
+		font-size: 1.25rem;
+		font-weight: bold;
+	}
+
 	.cards-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -457,10 +484,11 @@
 
 	.stats-row {
 		display: grid;
-		grid-template-columns: 1fr 1fr auto;
+		grid-template-columns: 1fr 1fr 1fr;
 		gap: 0.5rem;
 		align-items: center;
 		font-weight: bold;
+		font-size: 0.9rem;
 	}
 
 	.max-gear {
@@ -578,7 +606,6 @@
 		background: #f0f0f0;
 	}
 
-	/* Primary action buttons */
 	button.primary {
 		background: black;
 		color: white;
@@ -588,7 +615,6 @@
 		background: #333;
 	}
 
-	/* Danger buttons */
 	button.danger {
 		border-color: #dc2626;
 		color: #dc2626;
