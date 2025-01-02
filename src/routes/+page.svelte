@@ -107,6 +107,17 @@
 	const deleteCar = (index: number) => {
 		cars.update((currentCars) => currentCars.filter((_, i) => i !== index));
 	};
+
+	const toggleActivation = (index: number) => {
+		cars.update((currentCars) => {
+			const updatedCars = [...currentCars];
+			updatedCars[index] = {
+				...updatedCars[index],
+				activated: !updatedCars[index].activated
+			};
+			return updatedCars;
+		});
+	};
 </script>
 
 <!-- Fleet Summary -->
@@ -272,7 +283,13 @@
 
 			<div class="status-section">
 				<div class="status-label">ACTIVATED</div>
-				<div class="status-box">
+				<div
+					class="status-box"
+					on:click={() => toggleActivation(i)}
+					role="button"
+					tabindex="0"
+					on:keydown={(e) => e.key === 'Enter' && toggleActivation(i)}
+				>
 					{#if car.activated}
 						<div>⛽</div>
 					{/if}
@@ -480,6 +497,17 @@
 		justify-content: center;
 		align-items: center;
 		font-size: 1.5rem;
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
+
+	.status-box:hover {
+		background-color: #f0f0f0;
+	}
+
+	.status-box:focus {
+		outline: none;
+		border-color: #666;
 	}
 
 	.stats-row {
